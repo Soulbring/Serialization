@@ -1,22 +1,31 @@
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class PersonDatabase {
     private List<Person> persons;
+    private Set<Integer> usedIds;
     private static final String JSON_FILE = "persons.json";
     private static final String XML_FILE = "persons.xml";
     private int currentId = 1;
 
     public PersonDatabase() {
         persons = new ArrayList<>();
+        usedIds = new HashSet<>();
     }
 
     public void addPerson(Person person) {
+        while (usedIds.contains(currentId)) {
+            currentId++;
+        }
         person.setId(currentId++);
+        usedIds.add(person.getId());
         persons.add(person);
         saveToFile();
     }
@@ -34,6 +43,7 @@ public class PersonDatabase {
 
     public void deletePerson(int id) {
         persons.removeIf(person -> person.getId() == id);
+        usedIds.remove(id);
         saveToFile();
     }
 
@@ -71,6 +81,11 @@ public class PersonDatabase {
             // Load from JSON
             ObjectMapper jsonMapper = new ObjectMapper();
             persons = jsonMapper.readValue(new File(JSON_FILE), jsonMapper.getTypeFactory().constructCollectionType(List.class, Person.class));
+
+            for (Person person : persons) {
+                usedIds.add(person.getId());
+                currentId = Math.max(currentId, person.getId() + 1);
+            }
 
             // Load from XML
             XmlMapper xmlMapper = new XmlMapper();
