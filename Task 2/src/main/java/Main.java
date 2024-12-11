@@ -5,10 +5,16 @@ public class Main {
         PersonDatabase db = new PersonDatabase();
         Scanner scanner = new Scanner(System.in);
 
+        System.out.print("Do you want to load data from the file? (yes/no): ");
+        String loadChoice = scanner.nextLine().trim().toLowerCase();
+        if (loadChoice.equals("yes")) {
+            db.loadFromFile();
+        }
+
         while (true) {
             System.out.println("Choose an action: [1] Add Person, [2] Update Person, [3] Delete Person, [4] View Persons, [5] Search by ID, [6] Exit");
             int choice = scanner.nextInt();
-            scanner.nextLine(); // Consume newline
+            scanner.nextLine();
 
             switch (choice) {
                 case 1:
@@ -16,7 +22,7 @@ public class Main {
                     String name = scanner.nextLine();
                     System.out.print("Enter age: ");
                     int age = scanner.nextInt();
-                    scanner.nextLine(); // Consume newline
+                    scanner.nextLine();
 
                     Person person = new Person();
                     person.setName(name);
@@ -27,12 +33,12 @@ public class Main {
                 case 2:
                     System.out.print("Enter ID of the person to update: ");
                     int updateId = scanner.nextInt();
-                    scanner.nextLine(); // Consume newline
+                    scanner.nextLine();
                     System.out.print("Enter new name: ");
                     String newName = scanner.nextLine();
                     System.out.print("Enter new age: ");
                     int newAge = scanner.nextInt();
-                    scanner.nextLine(); // Consume newline
+                    scanner.nextLine();
 
                     Person newPerson = new Person();
                     newPerson.setName(newName);
@@ -43,7 +49,7 @@ public class Main {
                 case 3:
                     System.out.print("Enter ID of the person to delete: ");
                     int deleteId = scanner.nextInt();
-                    scanner.nextLine(); // Consume newline
+                    scanner.nextLine();
                     db.deletePerson(deleteId);
                     break;
 
@@ -54,7 +60,7 @@ public class Main {
                 case 5:
                     System.out.print("Enter ID of the person to search: ");
                     int searchId = scanner.nextInt();
-                    scanner.nextLine(); // Consume newline
+                    scanner.nextLine();
                     Person foundPerson = db.getPersonById(searchId);
                     if (foundPerson != null) {
                         System.out.println("ID: " + foundPerson.getId() + ", Name: " + foundPerson.getName() + ", Age: " + foundPerson.getAge());
