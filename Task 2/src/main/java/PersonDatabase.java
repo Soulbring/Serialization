@@ -78,6 +78,11 @@ public class PersonDatabase {
 
     public void loadFromFile() {
         try {
+            File jsonFile = new File(JSON_FILE);
+            if (!jsonFile.exists()) {
+                System.out.println("JSON file not found, starting with an empty database.");
+                return;
+            }
             // Load from JSON
             ObjectMapper jsonMapper = new ObjectMapper();
             persons = jsonMapper.readValue(new File(JSON_FILE), jsonMapper.getTypeFactory().constructCollectionType(List.class, Person.class));
