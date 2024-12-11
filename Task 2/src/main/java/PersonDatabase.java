@@ -79,24 +79,31 @@ public class PersonDatabase {
     public void loadFromFile() {
         try {
             File jsonFile = new File(JSON_FILE);
-            if (!jsonFile.exists()) {
-                System.out.println("JSON file not found, starting with an empty database.");
-                return;
-            }
-            // Load from JSON
-            ObjectMapper jsonMapper = new ObjectMapper();
-            persons = jsonMapper.readValue(new File(JSON_FILE), jsonMapper.getTypeFactory().constructCollectionType(List.class, Person.class));
+            if (jsonFile.exists()) {
 
+                ObjectMapper jsonMapper = new ObjectMapper();
+                persons = jsonMapper.readValue(jsonFile, jsonMapper.getTypeFactory().constructCollectionType(List.class, Person.class));
+            } else {
+                File xmlFile = new File(XML_FILE);
+                if (xmlFile.exists()) {
+
+                    XmlMapper xmlMapper = new XmlMapper();
+                    persons = xmlMapper.readValue(xmlFile, xmlMapper.getTypeFactory().constructCollectionType(List.class, Person.class));
+                } else {
+                    System.out.println("Neither JSON nor XML file found, starting with an empty database.");
+                    return;
+                }
+            }
+
+            // Populate usedIds set and determine currentId
             for (Person person : persons) {
                 usedIds.add(person.getId());
                 currentId = Math.max(currentId, person.getId() + 1);
             }
-
-            // Load from XML
-            XmlMapper xmlMapper = new XmlMapper();
-            persons = xmlMapper.readValue(new File(XML_FILE), xmlMapper.getTypeFactory().constructCollectionType(List.class, Person.class));
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
 }
+
